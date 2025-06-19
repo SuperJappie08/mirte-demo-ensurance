@@ -1,0 +1,13 @@
+<launch>
+  <arg name="use_intra_process_comms" default="False"/>
+  
+  <node_container name="detector_container" exec="component_container_mt" pkg="rclcpp_components" namespace="">
+    <param name="thread_num" value="2" />
+    <composable_node name="test_cam" pkg="usb_cam" plugin="usb_cam::UsbCamNode">
+      <extra_arg name="use_intra_process_comms" value="$(var use_intra_process_comms)"/>
+    </composable_node>
+    <composable_node name="apple_detector" pkg="apple_locator" plugin="apple_locator::AppleDetector">
+      <extra_arg name="use_intra_process_comms" value="$(var use_intra_process_comms)"/>
+    </composable_node>
+  </node_container>
+</launch>
