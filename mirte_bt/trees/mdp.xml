@@ -1,0 +1,14 @@
+<root BTCPP_format="4">
+  <BehaviorTree ID="MDPGroup17">
+	  <Sequence name="SCAN_TREE">
+      <RequestPoint service_name="get_point"/>
+      <RetryUntilSuccessful num_attempts="-1">
+        <ReceivePoint topic_name="point_3D" out_point="{@target_apple_point}"/>
+      </RetryUntilSuccessful>
+      <FineNavigation in_tree_pose="1;1;1;1;1;1;1;" in_target="{@target_apple_point}"/>
+      <MoveArm in_home="false" in_target="{@target_apple_point}"/>
+      <ToggleGripper in_to_grasp="true"/>
+      <MoveArm in_home="true" in_target="{@target_apple_point}"/>
+    </Sequence>		
+  </BehaviorTree>
+</root>

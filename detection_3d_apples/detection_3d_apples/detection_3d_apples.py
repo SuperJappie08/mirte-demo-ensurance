@@ -6,7 +6,7 @@ from rclpy.executors import MultiThreadedExecutor
 from rclpy.qos import QoSPresetProfiles
 
 from sensor_msgs.msg import Image, CompressedImage, RegionOfInterest
-from fsm.srv import GetPoint
+from std_srvs.srv import Trigger
 
 from cv_bridge import CvBridge
 from ultralytics import YOLO
@@ -66,7 +66,7 @@ class AppleDetectionNode(Node):
 
         # Create the GetPoint service inside that callback group
         self.create_service(
-            GetPoint,
+            Trigger,
             'get_point',
             self.handle_get_point,
             callback_group=self.cb_group
@@ -117,7 +117,7 @@ class AppleDetectionNode(Node):
             msg_type = CompressedImage
             self.get_logger().info("Service call received: subscribing to compressed topic.")
         else:
-            topic = '/gripper_camera/image_raw'
+            topic = '/camera/color/image_raw'
             callback_fn = self._raw_callback
             msg_type = Image
             self.get_logger().info("Service call received: subscribing to raw topic: " + topic)
