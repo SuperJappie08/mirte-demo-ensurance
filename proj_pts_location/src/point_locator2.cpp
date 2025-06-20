@@ -43,9 +43,6 @@ public:
         this->create_publisher<geometry_msgs::msg::Point>("/point_3D", 10);
     marker_pub_ = this->create_publisher<visualization_msgs::msg::Marker>(
         "/visualization_marker", 10);
-  }
-
-  void init() {
     depth_sub_ = this->create_subscription<sensor_msgs::msg::Image>(
         "/camera/depth/image_raw", rclcpp::SensorDataQoS(),
         std::bind(&PointLocator2::depthCallback, this, _1));
