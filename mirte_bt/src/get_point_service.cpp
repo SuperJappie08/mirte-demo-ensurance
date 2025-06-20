@@ -52,6 +52,13 @@ public:
     }
 };
 
-CreateRosNodePlugin(GetPointService, "RequestPoint");
+BT_REGISTER_ROS_NODES(factory, params)
+{
+  RosNodeParams aug_params;
+  aug_params.nh = params.nh;
+  aug_params.server_timeout = std::chrono::milliseconds(40000);   //Nav2 can take a while to respond, especialy in a container.
+  //TODO: options.use_global_arguments(false) need to fix this for plguins somehow. also applies to client name
+  factory.registerNodeType<GetPointService>("RequestPoint", aug_params);
+}
 
 }

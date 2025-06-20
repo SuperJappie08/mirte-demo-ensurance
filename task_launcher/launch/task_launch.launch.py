@@ -4,17 +4,25 @@ from launch_ros.actions import Node
 from launch.actions import IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 import os
+from launch.substitutions import PathJoinSubstitution
+from launch_ros.substitutions import FindPackageShare
 
 
 def generate_launch_description():
     return LaunchDescription([
-        Node(
-            package='fsm',
-            executable='fsm_node',
-            name='fsm_node',
-            parameters=['install/fsm/share/fsm/config/fsm_params.yaml'],
-            output='screen'
+        # Node(
+        #     package='fsm',
+        #     executable='fsm_node',
+        #     name='fsm_node',
+        #     parameters=['install/fsm/share/fsm/config/fsm_params.yaml'],
+        #     output='screen'
+        # ),
+        IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(PathJoinSubstitution([
+            FindPackageShare("mirte_bt"), "launch", "mirte_bt_bringup.launch.py"
+        ])),
         ),
+        
 
         # Node(
         #     package='task_gui',

@@ -119,8 +119,8 @@ public:
     q_180.setRPY(0, 0, M_PI);
 
     // Calculate rotated quaternion (used only for offset)
-    tf2::Quaternion q_rotated = q_180 * q_original;
-    q_rotated.normalize();
+    tf2::Quaternion q_rotated = q_original; // q_180 * q_original;
+    // q_rotated.normalize();
 
     // Extract yaw from rotated quaternion (used for offset only)
     double roll, pitch, rotated_yaw;

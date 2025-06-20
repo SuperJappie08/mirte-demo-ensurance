@@ -48,19 +48,22 @@ public:
 
 
     getInput(HOME, home);
-    getInput(TARGET, target_point);
-
+    auto res = getInput(TARGET, target_point);
     std::stringstream ss;
+    RCLCPP_INFO(logger(), ss.str().c_str());
+    if(res)
+    {
 
-    ss << "setGoal in MoveArm ";
-    ss << " x = " << target_point.x;
-    ss << " y = " << target_point.y;
-    ss << " z = " << target_point.z;
-    ss << " home = " << home;
+      ss << "setGoal in MoveArm ";
+      ss << " x = " << target_point.x;
+      ss << " y = " << target_point.y;
+      ss << " z = " << target_point.z;
+      ss << " home = " << home;
 
-    goal.x = target_point.x;
-    goal.y = target_point.y;
-    goal.z = target_point.z;
+      goal.x = target_point.x;
+      goal.y = target_point.y;
+      goal.z = target_point.z;
+    }
     goal.home = home;
 
 

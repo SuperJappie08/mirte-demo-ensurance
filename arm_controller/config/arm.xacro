@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="arm">
+    <link name="base_link"/>
+    <link name="frame_link"/>
+    <joint name="frame_base_joint" type="fixed">
+    <origin xyz="0 0 0.10" rpy="0 0 ${radians(90)}" />
+    <parent link="base_link" />
+    <child link="frame_link" />
+  </joint>
     <link
         name="shoulder_pan">
         <inertial>
