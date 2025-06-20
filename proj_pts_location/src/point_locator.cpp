@@ -73,7 +73,7 @@ private:
     // Load camera intrinsics from yaml
     void loadIntrinsicsFromYAML() {
         std::string package_share = ament_index_cpp::get_package_share_directory("proj_pts_location");
-        std::string config_path = package_share + "/camera_intrinsics.yaml";
+        std::string config_path = package_share + "/config/camera_intrinsics.yaml";
 
         try {
             YAML::Node config = YAML::LoadFile(config_path);

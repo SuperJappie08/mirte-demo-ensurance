@@ -34,18 +34,24 @@ find_package(OpenCV REQUIRED)
 # )
 
 ## Declare a ROS 2 composible node as a library
-ament_auto_add_library(${PROJECT_NAME}_node SHARED
+ament_auto_add_library(${PROJECT_NAME} SHARED
   src/apple_detector.cpp
+  src/apple_projector.cpp
 )
-target_compile_features(${PROJECT_NAME}_node PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
+target_compile_features(${PROJECT_NAME} PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
 
 # To fix `DSO missing from command line` error with clang
-target_link_libraries(${PROJECT_NAME}_node stdc++)
+target_link_libraries(${PROJECT_NAME} stdc++)
 
 ## Use node to generate an executable
-rclcpp_components_register_node(${PROJECT_NAME}_node
+rclcpp_components_register_node(${PROJECT_NAME}
   PLUGIN "apple_locator::AppleDetector"
-  EXECUTABLE ${PROJECT_NAME}_node_exe
+  EXECUTABLE apple_detector_node
+)
+
+rclcpp_components_register_node(${PROJECT_NAME}
+  PLUGIN "apple_locator::AppleProjector"
+  EXECUTABLE apple_projector_node
 )
 
 
@@ -64,12 +70,12 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 endif()
 
-install(TARGETS
-  ${PROJECT_NAME}_node
-  ARCHIVE DESTINATION lib
-  LIBRARY DESTINATION lib
-  RUNTIME DESTINATION lib
-)
+# install(TARGETS
+#   ${PROJECT_NAME}
+#   ARCHIVE DESTINATION lib
+#   LIBRARY DESTINATION lib
+#   RUNTIME DESTINATION lib
+# )
 
 ament_auto_package(
   INSTALL_TO_SHARE
