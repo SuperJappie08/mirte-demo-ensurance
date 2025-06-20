@@ -8,6 +8,7 @@
     </composable_node>
     <composable_node name="apple_detector" pkg="apple_locator" plugin="apple_locator::AppleDetector">
       <extra_arg name="use_intra_process_comms" value="$(var use_intra_process_comms)"/>
+      <remap from="image" to="image_raw"/>
     </composable_node>
   </node_container>
 </launch>
