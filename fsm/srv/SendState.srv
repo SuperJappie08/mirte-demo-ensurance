@@ -1,0 +1,4 @@
+# SendState.srv
+string command
+---
+bool success

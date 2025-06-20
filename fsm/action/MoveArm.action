@@ -1,0 +1,12 @@
+# Goal
+float64 x
+float64 y
+float64 z
+bool home
+---
+# Result
+bool success
+string message
+---
+# Feedback
+string status
