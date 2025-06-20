@@ -5,10 +5,12 @@
 #include <functional>
 
 #include <cv_bridge/cv_bridge.h>
-#include <image_transport/image_transport.hpp>
-#include <image_transport/subscriber.hpp>
+// #include <image_transport/image_transport.hpp>
+// #include <image_transport/subscriber.hpp>
 #include <opencv2/core/matx.hpp>
+#include <opencv2/core/types.hpp>
 #include <opencv2/imgproc.hpp>
+#include <rclcpp/logging.hpp>
 #include <rclcpp/node_options.hpp>
 #include <rclcpp/qos.hpp>
 #include <rclcpp/subscription_base.hpp>
@@ -28,6 +30,8 @@ AppleDetector::AppleDetector(const rclcpp::NodeOptions &node_options)
   using namespace std::placeholders;
 
   this->declare_parameter("image_timeout", 1000);
+  this->declare_parameter("red_min", std::vector<int64_t>{20, 150, 100});
+  this->declare_parameter("red_max", std::vector<int64_t>{190, 255, 255});
 
   this->get_point_srv_ = this->create_service<std_srvs::srv::Trigger>(
       "get_point",
@@ -44,19 +48,11 @@ void AppleDetector::get_point_srv_callback(
     GetPointSrv::Response::SharedPtr response) {
   RCLCPP_INFO(get_logger(), "Attempting to retrieve point");
 
-  auto options = rclcpp::SubscriptionOptions();
-  // options
-  // image_transport::Subscriber sub = it_.subscribe(
-  //     "image_raw", 1,
-  //     [](const sensor_msgs::msg::Image::ConstSharedPtr &msg) { (void)msg; },
-  //     nullptr, options);
-
   sensor_msgs::msg::Image msg;
-  // rclcpp::wait_for_message(&msg, sub, this->get_node_options().context());
 
   auto timeout = get_parameter("image_timeout").as_int();
   if (!rclcpp::wait_for_message(
-          msg, shared_from_this(), "/image_raw",
+          msg, shared_from_this(), "image",
           std::chrono::duration<uint64_t, std::milli>(timeout))) {
     RCLCPP_ERROR(get_logger(), "Failed to retrieve image within %ld ms.",
                  timeout);
@@ -72,8 +68,24 @@ void AppleDetector::get_point_srv_callback(
   cv::cvtColor(image->image, image_lab, cv::COLOR_BGR2Lab);
   cv::Mat mask;
 
-  cv::inRange(image_lab, cv::Scalar(20, 150, 100), cv::Scalar(190, 255, 255),
-              mask);
+  auto min_array = get_parameter("red_min").as_integer_array();
+  auto max_array = get_parameter("red_max").as_integer_array();
+
+  if (min_array.size() < 3) {
+    RCLCPP_WARN(get_logger(),
+                "parameter red_min should have size 3, using default.");
+    min_array = {20, 150, 100};
+  }
+  if (max_array.size() < 3) {
+    RCLCPP_WARN(get_logger(),
+                "parameter red_max should have size 3, using default.");
+    max_array = {190, 255, 255};
+  }
+
+  auto red_min = cv::Scalar(min_array[0], min_array[1], min_array[2]);
+  auto red_max = cv::Scalar(max_array[0], max_array[1], max_array[2]);
+
+  cv::inRange(image_lab, red_min, red_max, mask);
 
   cv::GaussianBlur(mask, mask, cv::Size_<int>(5, 5), 2);
   std::vector<cv::Vec3f> circles;
@@ -87,9 +99,11 @@ void AppleDetector::get_point_srv_callback(
     return;
   }
 
-  RCLCPP_INFO(get_logger(), "Succes");
+  RCLCPP_INFO(get_logger(), "Succes %ld", circles.size());
 
-  bounding_box_pub_->publish(vision_msgs::createAABB2D( circles[0][0]-circles[0][2], circles[0][1] - circles[0][2], 2*circles[0][2], 2*circles[0][2]));
+  bounding_box_pub_->publish(vision_msgs::createAABB2D(
+      circles[0][0] - circles[0][2], circles[0][1] - circles[0][2],
+      2 * circles[0][2], 2 * circles[0][2]));
   response->success = true;
 }
 
