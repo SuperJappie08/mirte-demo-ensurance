@@ -10,7 +10,8 @@
         <FineNavigation action_name="navigate_to_pose" in_tree_pose="0.389;-0.025;0.0;0.0;0.0;0.04;0.999;" in_target="{@target_apple_point}"/>
       </RetryUntilSuccessful>
       <MoveArm action_name="move_arm" in_home="false" in_target="{@target_apple_point}"/>
-      <ToggleGripper service_name="toggle_gripper" in_to_grasp="true"/>
+      <GripperCommand action_name="/mirte_master_gripper_controller/gripper_cmd" in_open="false"/>
+      <GripperCommand action_name="/mirte_master_gripper_controller/gripper_cmd" in_open="true"/>
       <MoveArm action_name="move_arm" in_home="true" in_target="{@target_apple_point}"/>
     </Sequence>		
   </BehaviorTree>
