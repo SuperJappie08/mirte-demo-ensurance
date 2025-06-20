@@ -1,4 +1,5 @@
 #include <geometry_msgs/msg/point.hpp>
+#include <rclcpp/node_options.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/msg/camera_info.hpp>
 #include <sensor_msgs/msg/image.hpp>
@@ -22,11 +23,13 @@
 
 using std::placeholders::_1;
 
+namespace proj_pts_location {
+
 class PointLocator2 : public rclcpp::Node {
 public:
-  PointLocator2()
-      : rclcpp::Node("point_locator_node"), tf_buffer_(this->get_clock()),
-        tf_listener_(tf_buffer_) {
+  PointLocator2(const rclcpp::NodeOptions &options)
+      : rclcpp::Node("point_locator_node", options),
+        tf_buffer_(this->get_clock()), tf_listener_(tf_buffer_) {
 
     loadIntrinsicsFromYAML();
 
@@ -270,11 +273,7 @@ private:
   }
 };
 
-int main(int argc, char **argv) {
-  rclcpp::init(argc, argv);
-  auto node = std::make_shared<PointLocator2>();
-  node->init();
-  rclcpp::spin(node);
-  rclcpp::shutdown();
-  return 0;
-}
+} // namespace proj_pts_location
+
+#include "rclcpp_components/register_node_macro.hpp"
+RCLCPP_COMPONENTS_REGISTER_NODE(proj_pts_location::PointLocator2)
