@@ -7,7 +7,7 @@
 
   <arg name="container_isolated_use_mt" default="False" />
   <arg name="container_thread_num" default="$(command 'nproc')" />
-  <arg name="use_intra_process_comms" default="true" />
+  <arg name="use_intra_process_comms" default="True" />
 
   <!-- unique camera name-->
   <arg name="camera_name" default="camera" />
@@ -21,29 +21,29 @@
   <arg name="enable_colored_point_cloud" default="false" />
   <arg name="point_cloud_qos" default="default" />
   <arg name="connection_delay" default="100" />
-  <arg name="color_width" default="640" />
-  <arg name="color_height" default="480" />
+  <arg name="color_width" default="320" />
+  <arg name="color_height" default="240" />
   <arg name="color_fps" default="30" />
   <arg name="enable_color" default="true" />
   <arg name="flip_color" default="false" />
   <arg name="color_qos" default="default" />
   <arg name="color_camera_info_qos" default="default" />
-  <arg name="depth_width" default="640" />
-  <arg name="depth_height" default="480" />
+  <arg name="depth_width" default="320" />
+  <arg name="depth_height" default="240" />
   <arg name="depth_fps" default="30" />
   <arg name="enable_depth" default="true" />
   <arg name="flip_depth" default="false" />
   <arg name="depth_qos" default="default" />
   <arg name="depth_camera_info_qos" default="default" />
-  <arg name="ir_width" default="640" />
-  <arg name="ir_height" default="480" />
+  <arg name="ir_width" default="320" />
+  <arg name="ir_height" default="240" />
   <arg name="ir_fps" default="30" />
   <arg name="enable_ir" default="true" />
   <arg name="flip_ir" default="false" />
   <arg name="ir_qos" default="default" />
   <arg name="ir_camera_info_qos" default="default" />
   <arg name="publish_tf" default="true" />
-  <arg name="tf_publish_rate" default="10.0" />
+  <arg name="tf_publish_rate" default="0.0" />
   <arg name="ir_info_uri" default="" />
   <arg name="color_info_uri" default="" />
   <arg name="color_roi_x" default="-1" />

@@ -1,0 +1,28 @@
+<launch>
+  <arg name="camera_namespace" default="camera" />
+  <arg name="target_container" default="$(var camera_namespace)/astra_container" />
+  <arg name="use_intra_process_comms" default="True" />
+
+  <load_composable_node target="$(var target_container)">
+    <composable_node pkg="image_proc" plugin="image_proc::RectifyNode" name="RectifyNode"
+      namespace="$(var camera_namespace)/color">
+      <remap from="image" to="image_raw" />
+      <extra_arg name="use_intra_process_comms" value="$(var use_intra_process_comms)" />
+    </composable_node>
+
+    <composable_node pkg="depth_image_proc" plugin="depth_image_proc::ConvertMetricNode"
+      name="ConvertMetricNode" namespace="$(var camera_namespace)/depth">
+      <extra_arg name="use_intra_process_comms" value="$(var use_intra_process_comms)" />
+    </composable_node>
+    <composable_node pkg="image_proc" plugin="image_proc::RectifyNode" name="RectifyNode"
+      namespace="$(var camera_namespace)/depth">
+      <extra_arg name="use_intra_process_comms" value="$(var use_intra_process_comms)" />
+    </composable_node>
+
+    <composable_node pkg="depth_image_proc" plugin="depth_image_proc::RegisterNode"
+      name="RegisterNode" namespace="$(var camera_namespace)">
+      <remap from="rgb/camera_info" to="color/camera_info" />
+      <extra_arg name="use_intra_process_comms" value="$(var use_intra_process_comms)" />
+    </composable_node>
+  </load_composable_node>
+</launch>

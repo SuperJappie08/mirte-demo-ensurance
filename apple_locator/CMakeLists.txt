@@ -37,8 +37,9 @@ find_package(OpenCV REQUIRED)
 ament_auto_add_library(${PROJECT_NAME} SHARED
   src/apple_detector.cpp
   src/apple_projector.cpp
+  src/apple_detector_ipc.cpp
 )
-target_compile_features(${PROJECT_NAME} PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
+target_compile_features(${PROJECT_NAME} PUBLIC c_std_99 cxx_std_20)  # Require C99 and C++17
 
 # To fix `DSO missing from command line` error with clang
 target_link_libraries(${PROJECT_NAME} stdc++)
@@ -47,6 +48,10 @@ target_link_libraries(${PROJECT_NAME} stdc++)
 rclcpp_components_register_node(${PROJECT_NAME}
   PLUGIN "apple_locator::AppleDetector"
   EXECUTABLE apple_detector_node
+)
+rclcpp_components_register_node(${PROJECT_NAME}
+  PLUGIN "apple_locator::AppleDetectorIPC"
+  EXECUTABLE apple_detector_ipc_node
 )
 
 rclcpp_components_register_node(${PROJECT_NAME}
