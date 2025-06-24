@@ -8,7 +8,7 @@
   <let name="robot_description"
     value="$(command 'xacro $(find-pkg-share mirte_master_description)/urdf/mirte_master.xacro')" />
 
-  <node pkg="controller_manager" exec="spawner" args="joint_state_publisher" />
+  <node pkg="controller_manager" exec="spawner" args="joint_state_broadcaster" />
 
   <node pkg="robot_state_publisher" exec="robot_state_publisher" unless="$(var use_composition)">
     <param name="frame_prefix" value="$(var frame_prefix)" />
