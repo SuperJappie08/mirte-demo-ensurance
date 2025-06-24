@@ -1,0 +1,25 @@
+<launch>
+  <arg name="use_composition" default="True" />
+  <arg name="container_name" default="/camera/astra_container" />
+  <arg name="use_intra_process_comms" default="True" />
+  <arg name="frame_prefix" default="" />
+
+  <let name="robot_description"
+    value="$(command 'xacro $(find-pkg-share mirte_master_description)/urdf/mirte_master.xacro')" />
+
+  <node pkg="controller_manager" exec="spawner" args="joint_state_publisher" />
+
+  <node pkg="robot_state_publisher" exec="robot_state_publisher" unless="$(var use_composition)">
+    <param name="frame_prefix" value="$(var frame_prefix)" />
+    <param name="robot_description" value="$(var robot_description)" />
+  </node>
+
+  <load_composable_node target="$(var container_name)" if="$(var use_composition)">
+    <composable_node pkg="robot_state_publisher" name="robot_state_publisher" plugin="robot_state_publisher::RobotStatePublisher">
+      <param name="frame_prefix" value="$(var frame_prefix)" />
+      <param name="robot_description" value="$(var robot_description)" />
+
+      <extra_arg name="use_intra_process_comms" value="$(var use_intra_process_comms)"/>
+    </composable_node>
+  </load_composable_node>
+</launch>
