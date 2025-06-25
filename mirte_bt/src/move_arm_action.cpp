@@ -1,11 +1,11 @@
 #include "behaviortree_ros2/bt_action_node.hpp"
 #include "rclcpp/rclcpp.hpp"
-#include "geometry_msgs/msg/point.hpp"
+#include "geometry_msgs/msg/point_stamped.hpp"
 #include "fsm/action/move_arm.hpp"
 #include "behaviortree_ros2/plugins.hpp"
 
 using MoveArm = fsm::action::MoveArm;
-using Point = geometry_msgs::msg::Point;
+using PointStamped = geometry_msgs::msg::PointStamped;
 
 namespace BT
 {
@@ -33,7 +33,7 @@ public:
   {
     PortsList base_ports = RosActionNode::providedPorts();
     PortsList child_ports = {
-      InputPort<Point>(TARGET),
+      InputPort<PointStamped>(TARGET),
       InputPort<bool>(HOME),
     };
     child_ports.merge(base_ports);
@@ -55,14 +55,14 @@ public:
     {
 
       ss << "setGoal in MoveArm ";
-      ss << " x = " << target_point.x;
-      ss << " y = " << target_point.y;
-      ss << " z = " << target_point.z;
+      ss << " x = " << target_point.point.x;
+      ss << " y = " << target_point.point.y;
+      ss << " z = " << target_point.point.z;
       ss << " home = " << home;
 
-      goal.x = target_point.x;
-      goal.y = target_point.y;
-      goal.z = target_point.z;
+      goal.x = target_point.point.x;
+      goal.y = target_point.point.y;
+      goal.z = target_point.point.z;
     }
     goal.home = home;
 
@@ -105,7 +105,7 @@ public:
 
 private:
   bool home;
-  Point target_point;
+  PointStamped target_point;
 };
 
 BT_REGISTER_ROS_NODES(factory, params)

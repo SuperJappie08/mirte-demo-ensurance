@@ -7,78 +7,63 @@ endif()
 
 # find dependencies We import external dependencies for both Cpp and Python at the same time.
 find_package(ament_cmake REQUIRED)
+find_package(ament_cmake_auto REQUIRED)
 find_package(ament_cmake_python REQUIRED)
-find_package(rclcpp REQUIRED)
-find_package(rclcpp_lifecycle REQUIRED)
-find_package(rclpy REQUIRED)
-find_package(behaviortree_ros2 REQUIRED)
-find_package(behaviortree_cpp REQUIRED)
-find_package(geometry_msgs REQUIRED)
-find_package(nav_msgs REQUIRED)
-find_package(nav2_msgs REQUIRED)
-find_package(sensor_msgs REQUIRED)
-find_package(slam_toolbox REQUIRED)
-find_package(diagnostic_msgs REQUIRED)
-find_package(lifecycle_msgs REQUIRED)
-find_package(std_msgs REQUIRED)
-find_package(std_srvs REQUIRED)
-find_package(fsm REQUIRED)
-find_package(control_msgs REQUIRED)
+ament_auto_find_build_dependencies()
+# find_package(rclcpp REQUIRED)
+# find_package(rclcpp_lifecycle REQUIRED)
+# find_package(rclpy REQUIRED)
+# find_package(behaviortree_ros2 REQUIRED)
+# find_package(behaviortree_cpp REQUIRED)
+# find_package(geometry_msgs REQUIRED)
+# find_package(nav_msgs REQUIRED)
+# find_package(nav2_msgs REQUIRED)
+# find_package(sensor_msgs REQUIRED)
+# find_package(slam_toolbox REQUIRED)
+# find_package(diagnostic_msgs REQUIRED)
+# find_package(lifecycle_msgs REQUIRED)
+# find_package(std_msgs REQUIRED)
+# find_package(std_srvs REQUIRED)
+# find_package(fsm REQUIRED)
+# find_package(control_msgs REQUIRED)
 
 
-set(THIS_PACKAGE_DEPS
-    rclcpp
-    rclcpp_lifecycle 
-    behaviortree_ros2
-    behaviortree_cpp
-    lifecycle_msgs
-    diagnostic_msgs 
-    geometry_msgs
-    nav_msgs
-    nav2_msgs
-    sensor_msgs
-    std_srvs
-    slam_toolbox
-    fsm
-    control_msgs)
+# set(THIS_PACKAGE_DEPS
+#     rclcpp
+#     rclcpp_lifecycle 
+#     behaviortree_ros2
+#     behaviortree_cpp
+#     lifecycle_msgs
+#     diagnostic_msgs 
+#     geometry_msgs
+#     nav_msgs
+#     nav2_msgs
+#     sensor_msgs
+#     std_srvs
+#     slam_toolbox
+#     fsm
+#     control_msgs)
 
 # Include Cpp "include" directory
 include_directories(include)
 
 # Create Cpp executable
-add_executable(mirte_arborist src/mirte_arborist.cpp)
-ament_target_dependencies(mirte_arborist ${THIS_PACKAGE_DEPS})
+ament_auto_add_executable(mirte_arborist src/mirte_arborist.cpp)
 
-add_library(three_d_point_plugin SHARED src/three_d_point_sub.cpp)
+ament_auto_add_library(three_d_point_plugin SHARED src/three_d_point_sub.cpp)
 target_compile_definitions(three_d_point_plugin PRIVATE  BT_PLUGIN_EXPORT )
-ament_target_dependencies(three_d_point_plugin ${THIS_PACKAGE_DEPS})
 
-add_library(get_point_plugin SHARED src/get_point_service.cpp)
+ament_auto_add_library(get_point_plugin SHARED src/get_point_service.cpp)
 target_compile_definitions(get_point_plugin PRIVATE  BT_PLUGIN_EXPORT )
-ament_target_dependencies(get_point_plugin ${THIS_PACKAGE_DEPS})
 
-
-add_library(fine_navigation_plugin SHARED src/fine_navigation_action.cpp)
+ament_auto_add_library(fine_navigation_plugin SHARED src/fine_navigation_action.cpp)
 target_compile_definitions(fine_navigation_plugin PRIVATE  BT_PLUGIN_EXPORT )
-ament_target_dependencies(fine_navigation_plugin ${THIS_PACKAGE_DEPS})
 
-add_library(move_arm_plugin SHARED src/move_arm_action.cpp)
+ament_auto_add_library(move_arm_plugin SHARED src/move_arm_action.cpp)
 target_compile_definitions(move_arm_plugin PRIVATE  BT_PLUGIN_EXPORT )
-ament_target_dependencies(move_arm_plugin ${THIS_PACKAGE_DEPS})
 
-add_library(toggle_gripper_plugin SHARED src/toggle_gripper_service.cpp)
+ament_auto_add_library(toggle_gripper_plugin SHARED src/toggle_gripper_service.cpp)
 target_compile_definitions(toggle_gripper_plugin PRIVATE  BT_PLUGIN_EXPORT )
-ament_target_dependencies(toggle_gripper_plugin ${THIS_PACKAGE_DEPS})
-
-
-
-
-
-# Install Cpp executables
-install(TARGETS
-  mirte_arborist
-  DESTINATION lib/${PROJECT_NAME}
-)
 
 # Install Python modules
 ament_python_install_package(${PROJECT_NAME})
@@ -95,27 +80,10 @@ install(TARGETS
   fine_navigation_plugin
   move_arm_plugin
   toggle_gripper_plugin
-  DESTINATION lib/${PROJECT_NAME}
-)
-
-install(TARGETS
-  three_d_point_plugin
-  get_point_plugin
-  fine_navigation_plugin
-  move_arm_plugin
-  toggle_gripper_plugin
   LIBRARY DESTINATION share/${PROJECT_NAME}/bt_plugins
   ARCHIVE DESTINATION share/${PROJECT_NAME}/bt_plugins
   RUNTIME DESTINATION share/${PROJECT_NAME}/bt_plugins
   )
-
-install(DIRECTORY
-  launch
-  config
-  trees
-  DESTINATION share/${PROJECT_NAME}/
-)
-
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -129,4 +97,9 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 endif()
 
-ament_package()
+ament_auto_package(
+  INSTALL_TO_SHARE
+    launch
+    config
+    trees
+)

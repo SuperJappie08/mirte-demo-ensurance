@@ -3,6 +3,7 @@
 #include "geometry_msgs/msg/pose_stamped.hpp"
 #include "geometry_msgs/msg/pose.hpp"
 #include "geometry_msgs/msg/point.hpp"
+#include "geometry_msgs/msg/point_stamped.hpp"
 #include "nav2_msgs/action/navigate_to_pose.hpp"
 #include "behaviortree_ros2/plugins.hpp"
 #include "tf2/LinearMath/Quaternion.h"
@@ -13,6 +14,7 @@
 
 using NavigateToPose = nav2_msgs::action::NavigateToPose;
 using Point = geometry_msgs::msg::Point;
+using PointStamped = geometry_msgs::msg::PointStamped;
 using Pose = geometry_msgs::msg::Pose;
 using PoseStamped = geometry_msgs::msg::PoseStamped;
 
@@ -89,7 +91,7 @@ public:
     PortsList base_ports = RosActionNode::providedPorts();
     PortsList child_ports = {
       InputPort<Pose>(POSE),
-      InputPort<Point>(TARGET)
+      InputPort<PointStamped>(TARGET)
     };
     child_ports.merge(base_ports);
     return child_ports;
@@ -128,8 +130,8 @@ public:
     tf2::Matrix3x3(q_rotated).getRPY(roll, pitch, rotated_yaw);
 
     // Use rotated yaw to calculate offset position
-    double goal_x = target_point.x - offset * std::cos(rotated_yaw);
-    double goal_y = target_point.y - offset * std::sin(rotated_yaw);
+    double goal_x = target_point.point.x - offset * std::cos(rotated_yaw);
+    double goal_y = target_point.point.y - offset * std::sin(rotated_yaw);
     Pose pose_to_navigate_to = Pose();
     pose_to_navigate_to.position.x = goal_x;
     pose_to_navigate_to.position.y = goal_y;
@@ -140,7 +142,7 @@ public:
 
     PoseStamped stamped_pose;
     stamped_pose.header.frame_id = "map";
-    stamped_pose.header.stamp = now() - rclcpp::Duration(300ms);
+    stamped_pose.header.stamp = target_point.header.stamp;
     stamped_pose.pose = pose_to_navigate_to;
 
     goal.pose = stamped_pose;
@@ -181,7 +183,7 @@ public:
 
 private:
   Pose tree_pose;
-  Point target_point;
+  PointStamped target_point;
 };
 
 BT_REGISTER_ROS_NODES(factory, params)

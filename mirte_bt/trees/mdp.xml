@@ -4,7 +4,7 @@
       <MoveArm action_name="move_arm" in_home="true"/>
       <RequestPoint service_name="get_point"/>
       <RetryUntilSuccessful num_attempts="-1">
-        <ReceivePoint topic_name="point_3D" out_point="{@target_apple_point}"/>
+        <ReceivePoint topic_name="pick_point" out_point="{@target_apple_point}"/>
       </RetryUntilSuccessful>
       <RetryUntilSuccessful num_attempts="5">
         <FineNavigation action_name="navigate_to_pose" in_tree_pose="0.389;-0.025;0.0;0.0;0.0;0.04;0.999;" in_target="{@target_apple_point}"/>

@@ -57,20 +57,20 @@ def generate_launch_description():
             prefix='gnome-terminal --'
         ),
 
-        Node(
-            package='detection_3d_apples',
-            executable='detection_node',
-            name='detection_node',
-            output='screen',
-            prefix='gnome-terminal --',
-        ),
+        # Node(
+        #     package='detection_3d_apples',
+        #     executable='detection_node',
+        #     name='detection_node',
+        #     output='screen',
+        #     prefix='gnome-terminal --',
+        # ),
 
-        Node(
-            package='proj_pts_location',
-            executable='point_locator',
-            name='point_locator',
-            parameters=[{'image_transport': 'compressedDepth'}],
-            output='screen',
-            prefix='gnome-terminal --'
-        ),
+        # Node(
+        #     package='proj_pts_location',
+        #     executable='point_locator',
+        #     name='point_locator',
+        #     parameters=[{'image_transport': 'compressedDepth'}],
+        #     output='screen',
+        #     prefix='gnome-terminal --'
+        # ),
     ])
