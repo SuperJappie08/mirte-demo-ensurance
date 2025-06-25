@@ -30,7 +30,7 @@
   <depend>vision_msgs</depend>
   <depend>geometry_msgs</depend>
 
-  <exec_depend>usb_cam</exec_depend>
+  <!-- <exec_depend>usb_cam</exec_depend> -->
   <exec_depend>launch_ros</exec_depend>
   <exec_depend>launch_xml</exec_depend>
 

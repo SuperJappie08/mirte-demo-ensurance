@@ -29,7 +29,8 @@ class PointLocator2 : public rclcpp::Node {
 public:
   PointLocator2(const rclcpp::NodeOptions &options)
       : rclcpp::Node("point_locator_node", options),
-        tf_buffer_(this->get_clock()), tf_listener_(tf_buffer_, this) {
+      // NOTE: Merging TF node breaks IPC pre Jazzy
+        tf_buffer_(this->get_clock()), tf_listener_(tf_buffer_ /*, this*/) {
 
     loadIntrinsicsFromYAML();
 

@@ -19,7 +19,8 @@ namespace apple_locator {
 
 AppleProjector::AppleProjector(const rclcpp::NodeOptions &options)
     : Node("apple_projector", options), tf_buffer_(this->get_clock()),
-      tf_listener_(tf_buffer_, this) {
+      // NOTE: Merging TF node breaks IPC pre Jazzy
+      tf_listener_(tf_buffer_ /*, this*/) {
   using namespace std::placeholders;
   this->declare_parameter<std::string>("image_transport", "raw");
   this->declare_parameter<double>("tf2_timeout", 1.0);
@@ -40,10 +41,11 @@ AppleProjector::AppleProjector(const rclcpp::NodeOptions &options)
 
   this->cam_point_pub_ =
       this->create_publisher<geometry_msgs::msg::PointStamped>(
-          "~/point_3d_camera", rclcpp::SystemDefaultsQoS());
+          "~/pick_point_camera",
+          rclcpp::SystemDefaultsQoS().durability_volatile());
   this->pick_point_pub_ =
       this->create_publisher<geometry_msgs::msg::PointStamped>(
-          "pick_point", rclcpp::SystemDefaultsQoS());
+          "pick_point", rclcpp::SystemDefaultsQoS().durability_volatile());
 
   this->detections_sub_ =
       this->create_subscription<vision_msgs::msg::BoundingBox2D>(
