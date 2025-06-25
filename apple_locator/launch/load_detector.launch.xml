@@ -1,0 +1,17 @@
+<launch>
+  <arg name="camera_namespace" default="camera" />
+  <arg name="target_container" default="$(var camera_namespace)/astra_container" />
+  <arg name="use_intra_process_comms" default="True" />
+
+  <load_composable_node target="$(var target_container)">
+    <composable_node pkg="apple_locator" plugin="apple_locator::AppleDetectorIPC" name="apple_detector">
+      <remap from="image" to="$(var camera_namespace)/color/image_rect" />
+      <extra_arg name="use_intra_process_comms" value="$(var use_intra_process_comms)" />
+    </composable_node>
+
+    <composable_node pkg="apple_locator" plugin="apple_locator::AppleProjector" name="apple_projector">
+      <extra_arg name="use_intra_process_comms" value="$(var use_intra_process_comms)" />
+    </composable_node>
+</load_composable_node>
+
+</launch>

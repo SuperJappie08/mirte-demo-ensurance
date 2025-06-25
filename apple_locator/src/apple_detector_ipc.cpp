@@ -1,29 +1,23 @@
-#include <apple_locator/apple_detector_ipc.hpp>
-
 #include <chrono>
 #include <cstdint>
 #include <functional>
 
-#include <cv_bridge/cv_bridge.h>
-// #include <image_transport/image_transport.hpp>
-// #include <image_transport/subscriber.hpp>
-#include <opencv2/core/matx.hpp>
-#include <opencv2/core/types.hpp>
-#include <opencv2/imgproc.hpp>
+#include <apple_locator/apple_detector_ipc.hpp>
 
 #include <rclcpp/logging.hpp>
 #include <rclcpp/node_options.hpp>
 #include <rclcpp/qos.hpp>
-#include <rclcpp/subscription_base.hpp>
-#include <rclcpp/subscription_options.hpp>
-#include <rclcpp/wait_for_message.hpp>
-// #include <sensor_msgs/msg/region_of_interest.hpp>
-#include <create_aabb.hpp>
-#include <vision_msgs/msg/bounding_box2_d.hpp>
-#include <image_proc/utils.hpp>
 
+#include <image_proc/utils.hpp>
+#include <image_transport/image_transport.hpp>
+#include <image_transport/transport_hints.hpp>
+
+#include <cv_bridge/cv_bridge.h>
 #include <opencv2/core.hpp>
 #include <opencv2/imgproc.hpp>
+
+#include <create_aabb.hpp>
+#include <sensor_msgs/image_encodings.hpp>
 
 namespace apple_locator {
 
@@ -52,7 +46,6 @@ AppleDetectorIPC::AppleDetectorIPC(const rclcpp::NodeOptions &node_options)
       std::bind(&AppleDetectorIPC::get_point_srv_callback, this, _1, _2));
 
   this->bounding_box_pub_ =
-      // this->create_publisher<sensor_msgs::msg::RegionOfInterest>(
       this->create_publisher<vision_msgs::msg::BoundingBox2D>(
           "~/bbox_coords", rclcpp::SystemDefaultsQoS().durability_volatile());
 }
@@ -60,6 +53,7 @@ AppleDetectorIPC::AppleDetectorIPC(const rclcpp::NodeOptions &node_options)
 void AppleDetectorIPC::get_point_srv_callback(
     const GetPointSrv::Request::ConstSharedPtr /*request*/,
     GetPointSrv::Response::SharedPtr response) {
+  namespace image_encodings = sensor_msgs::image_encodings;
   RCLCPP_INFO(get_logger(), "Attempting to retrieve point");
 
   if (!this->img_) {
@@ -69,20 +63,7 @@ void AppleDetectorIPC::get_point_srv_callback(
     return;
   }
 
-  // sensor_msgs::msg::Image msg;
-
-  // auto timeout = get_parameter("image_timeout").as_int();
-  // if (!rclcpp::wait_for_message(
-  //   msg, shared_from_this(), "image",
-  //   std::chrono::duration<uint64_t, std::milli>(timeout))) {
-  //   RCLCPP_ERROR(get_logger(), "Failed to retrieve image within %ld ms.",
-  //                timeout);
-  //   response->success = false;
-  //   response->message = "Failed to retrieve image within the timeout";
-  //   return;
-  // }
-
-  auto image = cv_bridge::toCvCopy(this->img_, "bgr8");
+  auto image = cv_bridge::toCvCopy(this->img_, image_encodings::BGR8);
 
   cv::medianBlur(image->image, image->image, 3);
   cv::Mat image_lab;

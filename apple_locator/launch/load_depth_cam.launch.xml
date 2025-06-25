@@ -19,10 +19,10 @@
       <extra_arg name="use_intra_process_comms" value="$(var use_intra_process_comms)" />
     </composable_node>
 
-    <composable_node pkg="depth_image_proc" plugin="depth_image_proc::RegisterNode"
+    <!-- <composable_node pkg="depth_image_proc" plugin="depth_image_proc::RegisterNode"
       name="RegisterNode" namespace="$(var camera_namespace)">
       <remap from="rgb/camera_info" to="color/camera_info" />
       <extra_arg name="use_intra_process_comms" value="$(var use_intra_process_comms)" />
-    </composable_node>
+    </composable_node> -->
   </load_composable_node>
 </launch>

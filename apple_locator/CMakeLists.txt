@@ -34,34 +34,43 @@ find_package(OpenCV REQUIRED)
 # )
 
 ## Declare a ROS 2 composible node as a library
-ament_auto_add_library(${PROJECT_NAME} SHARED
+## apple_locator::AppleDetector
+ament_auto_add_library(apple_detector SHARED
   src/apple_detector.cpp
-  src/apple_projector.cpp
-  src/apple_detector_ipc.cpp
 )
-target_compile_features(${PROJECT_NAME} PUBLIC c_std_99 cxx_std_20)  # Require C99 and C++17
-
-# To fix `DSO missing from command line` error with clang
-target_link_libraries(${PROJECT_NAME} stdc++)
+target_compile_features(apple_detector PUBLIC c_std_99 cxx_std_20)  # Require C99 and C++17
 
 ## Use node to generate an executable
-rclcpp_components_register_node(${PROJECT_NAME}
+rclcpp_components_register_node(apple_detector
   PLUGIN "apple_locator::AppleDetector"
   EXECUTABLE apple_detector_node
 )
-rclcpp_components_register_node(${PROJECT_NAME}
+
+## Declare a ROS 2 composible node as a library
+## apple_locator::AppleDetectorIPC
+ament_auto_add_library(apple_detector_ipc SHARED
+  src/apple_detector_ipc.cpp
+)
+target_compile_features(apple_detector_ipc PUBLIC c_std_99 cxx_std_20)  # Require C99 and C++17
+
+## Use node to generate an executable
+rclcpp_components_register_node(apple_detector_ipc
   PLUGIN "apple_locator::AppleDetectorIPC"
   EXECUTABLE apple_detector_ipc_node
 )
 
-rclcpp_components_register_node(${PROJECT_NAME}
+## Declare a ROS 2 composible node as a library
+## apple_locator::AppleDetectorIPC
+ament_auto_add_library(apple_projector SHARED
+  src/apple_projector.cpp
+)
+target_compile_features(apple_projector PUBLIC c_std_99 cxx_std_20)  # Require C99 and C++17
+
+## Use node to generate an executable
+rclcpp_components_register_node(apple_projector
   PLUGIN "apple_locator::AppleProjector"
   EXECUTABLE apple_projector_node
 )
-
-
-# install(TARGETS apple_detector
-#   DESTINATION lib/${PROJECT_NAME})
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -74,13 +83,6 @@ if(BUILD_TESTING)
   set(ament_cmake_cpplint_FOUND TRUE)
   ament_lint_auto_find_test_dependencies()
 endif()
-
-# install(TARGETS
-#   ${PROJECT_NAME}
-#   ARCHIVE DESTINATION lib
-#   LIBRARY DESTINATION lib
-#   RUNTIME DESTINATION lib
-# )
 
 ament_auto_package(
   INSTALL_TO_SHARE

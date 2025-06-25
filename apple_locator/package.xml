@@ -10,18 +10,25 @@
   <buildtool_depend>ament_cmake</buildtool_depend>
   <buildtool_depend>ament_cmake_auto</buildtool_depend>
 
-  <depend>cv_bridge</depend>
-  <depend>image_transport</depend>
-  <depend>libopencv-dev</depend>
-  <depend>message_filters</depend>
   <depend>rclcpp</depend>
   <depend>rclcpp_components</depend>
-  <depend>sensor_msgs</depend>
-  <depend>std_srvs</depend>
-  <depend>tf2_ros</depend>
-  <depend>vision_msgs</depend>
+
+  <depend>cv_bridge</depend>
+  <depend>image_geometry</depend>
   <depend>image_proc</depend>
+  <depend>image_transport</depend>
+  <depend>libopencv-dev</depend>
+
+  <depend>tf2</depend>
+  <depend>tf2_ros</depend>
+  <depend>tf2_geometry_msgs</depend>
+
   <depend>backward_ros</depend>
+
+  <depend>std_srvs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>vision_msgs</depend>
+  <depend>geometry_msgs</depend>
 
   <exec_depend>usb_cam</exec_depend>
   <exec_depend>launch_ros</exec_depend>
