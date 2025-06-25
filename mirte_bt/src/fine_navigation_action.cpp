@@ -8,7 +8,7 @@
 #include "tf2/LinearMath/Quaternion.h"
 #include "tf2/LinearMath/Matrix3x3.h"
 #include "tf2_geometry_msgs/tf2_geometry_msgs.hpp"
-
+#include "chrono"
 
 
 using NavigateToPose = nav2_msgs::action::NavigateToPose;
@@ -16,6 +16,7 @@ using Point = geometry_msgs::msg::Point;
 using Pose = geometry_msgs::msg::Pose;
 using PoseStamped = geometry_msgs::msg::PoseStamped;
 
+using namespace std::chrono_literals;
 
 namespace BT
 {
@@ -139,7 +140,7 @@ public:
 
     PoseStamped stamped_pose;
     stamped_pose.header.frame_id = "map";
-    stamped_pose.header.stamp = now();
+    stamped_pose.header.stamp = now() - rclcpp::Duration(300ms);
     stamped_pose.pose = pose_to_navigate_to;
 
     goal.pose = stamped_pose;

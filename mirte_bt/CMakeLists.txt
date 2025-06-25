@@ -23,6 +23,7 @@ find_package(lifecycle_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(std_srvs REQUIRED)
 find_package(fsm REQUIRED)
+find_package(control_msgs REQUIRED)
 
 
 set(THIS_PACKAGE_DEPS
@@ -38,7 +39,8 @@ set(THIS_PACKAGE_DEPS
     sensor_msgs
     std_srvs
     slam_toolbox
-    fsm)
+    fsm
+    control_msgs)
 
 # Include Cpp "include" directory
 include_directories(include)

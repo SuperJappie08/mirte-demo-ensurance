@@ -23,7 +23,7 @@ def generate_launch_description():
         Node(
         package="mirte_bt",
         executable="tree_action_client.py",
-        arguments=["MDPGroup17"],
+        arguments=["GRIPPER"],
         prefix='gnome-terminal --',
         output="screen",
     )
