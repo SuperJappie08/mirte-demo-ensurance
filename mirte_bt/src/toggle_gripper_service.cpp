@@ -36,6 +36,8 @@ public:
     PortsList base_ports = RosActionNode::providedPorts();
     PortsList child_ports = {
       InputPort<bool>(OPEN_CLOSE),
+      InputPort<double>("open_angle", 0.165, ""),
+      InputPort<double>("close_angle", -0.3, ""),
     };
     child_ports.merge(base_ports);
     return child_ports;
@@ -44,9 +46,11 @@ public:
   bool setGoal(RosActionNode::Goal & goal) override
   {
 
+    double open,close;
     getInput(OPEN_CLOSE, open_close);
-    double open = 0.0;
-    double close = -0.3;
+    getInput("open_angle", open);
+    getInput("close_angle", close);
+
     target_position_ = open_close ? open : close;
 
     goal.command.position = target_position_;

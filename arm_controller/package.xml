@@ -8,13 +8,14 @@
   <license>TODO: License declaration</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
+  <buildtool_depend>ament_cmake_auto</buildtool_depend>
 
   <!-- Runtime and build dependencies -->
   <depend>rclcpp</depend>
   <depend>rclcpp_action</depend>
   <depend>fsm</depend>
   <depend>std_msgs</depend>
-  <depend>KDL</depend>
+  <!-- <depend>KDL</depend> -->
   <depend>orocos_kdl_vendor</depend>
   <depend>kdl_parser</depend>
   <depend>ament_index_cpp</depend>

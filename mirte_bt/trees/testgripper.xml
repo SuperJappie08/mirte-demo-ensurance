@@ -1,7 +1,8 @@
 <root BTCPP_format="4">
   <BehaviorTree ID="GRIPPER">
 	  <Sequence name="SCAN_TREE">
-      <GripperCommand action_name="/mirte_master_gripper_controller/gripper_cmd" in_open="true"/>
+      <MoveArm action_name="move_arm" in_home="true" />
+      <GripperCommand action_name="/mirte_master_gripper_controller/gripper_cmd" in_open="true" open_angle="0.165"/>
       <GripperCommand action_name="/mirte_master_gripper_controller/gripper_cmd" in_open="false"/>
     </Sequence>		
   </BehaviorTree>

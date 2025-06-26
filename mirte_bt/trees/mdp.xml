@@ -1,18 +1,29 @@
 <root BTCPP_format="4">
   <BehaviorTree ID="MDPGroup17">
-	  <Sequence name="SCAN_TREE">
-      <MoveArm action_name="move_arm" in_home="true"/>
-      <RequestPoint service_name="get_point"/>
+    <Sequence name="SCAN_TREE">
+      <MoveArm action_name="move_arm" in_home="true" />
       <RetryUntilSuccessful num_attempts="-1">
-        <ReceivePoint topic_name="pick_point" out_point="{@target_apple_point}"/>
+        <Sequence>
+          <RequestPoint service_name="get_point" />
+          <RetryUntilSuccessful num_attempts="5">
+            <ReceivePoint topic_name="pick_point" out_point="{@target_apple_point}" />
+          </RetryUntilSuccessful>
+        </Sequence>
       </RetryUntilSuccessful>
-      <RetryUntilSuccessful num_attempts="5">
-        <FineNavigation action_name="navigate_to_pose" in_tree_pose="0.389;-0.025;0.0;0.0;0.0;0.04;0.999;" in_target="{@target_apple_point}"/>
+      <RetryUntilSuccessful
+        num_attempts="5">
+        <FineNavigation action_name="navigate_to_pose"
+          in_tree_pose="1.151;-0.032;0.0;0.0;0.0;0.432;0.902;"
+          in_target="{@target_apple_point}" />
       </RetryUntilSuccessful>
-      <MoveArm action_name="move_arm" in_home="false" in_target="{@target_apple_point}"/>
-      <GripperCommand action_name="/mirte_master_gripper_controller/gripper_cmd" in_open="false"/>
-      <GripperCommand action_name="/mirte_master_gripper_controller/gripper_cmd" in_open="true"/>
-      <MoveArm action_name="move_arm" in_home="true" in_target="{@target_apple_point}"/>
-    </Sequence>		
+      <RetryUntilSuccessful num_attempts="-1">
+        <Sequence>
+          <MoveArm action_name="move_arm" in_home="false" in_target="{@target_apple_point}" />
+          <GripperCommand action_name="/mirte_master_gripper_controller/gripper_cmd" in_open="false" />
+        </Sequence>
+      </RetryUntilSuccessful>
+      <GripperCommand action_name="/mirte_master_gripper_controller/gripper_cmd" in_open="true" />
+      <MoveArm action_name="move_arm" in_home="true" in_target="{@target_apple_point}" />
+    </Sequence>
   </BehaviorTree>
 </root>

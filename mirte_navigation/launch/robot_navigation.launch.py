@@ -4,9 +4,9 @@ from ament_index_python.packages import get_package_share_directory
 
 from launch_ros.actions import Node
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription, ExecuteProcess, TimerAction
+from launch.actions import IncludeLaunchDescription, ExecuteProcess, TimerAction, DeclareLaunchArgument
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import PathJoinSubstitution
+from launch.substitutions import PathJoinSubstitution, LaunchConfiguration
 from launch_ros.substitutions import FindPackageShare  
 from nav2_common.launch import ReplaceString
 
@@ -14,11 +14,8 @@ def generate_launch_description():
     # Get the package share directory
     pkg_mirte_navigation = get_package_share_directory('mirte_navigation')
 
-    # Define relative paths for the map and params file
-    map_file = os.path.join(
-        pkg_mirte_navigation,
-        'maps',
-        'lab_map.yaml')
+    # # Define relative paths for the map and params file
+    map_arg = DeclareLaunchArgument("map", default_value=PathJoinSubstitution([pkg_mirte_navigation, "maps", 'lab_map.yaml']))
     
     nav2_params_file = os.path.join(
         pkg_mirte_navigation,
@@ -40,7 +37,7 @@ def generate_launch_description():
             FindPackageShare("nav2_bringup"), "launch", "localization_launch.py"
         ])),
         launch_arguments={
-            'map': map_file,
+            'map': LaunchConfiguration("map"),
             "use_respawn": "true",
             "params_file": params_file,
             "use_sim_time": "false",
@@ -70,13 +67,15 @@ def generate_launch_description():
         package = "topic_tools",
         executable = "relay",
         arguments=["/cmd_vel", "/mirte_base_controller/cmd_vel"],
-        output="screen",
+        name="cmd_vel_relay"
+        # output="screen",
     )
     relay_topic_odom = Node(
         package = "topic_tools",
         executable = "relay",
         arguments=["/mirte_base_controller/odom", "/odom"],
-        output="screen",
+        # output="screen",
+        name="odom_relay"
     )
     # tf_base_footprint = 
     tf_base_frame = TimerAction(
@@ -106,6 +105,7 @@ def generate_launch_description():
         ]
     )
     return LaunchDescription([
+        map_arg,
         localization_launch,
         initial_pose_node,
         navigation_launch,

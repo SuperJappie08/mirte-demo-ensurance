@@ -28,5 +28,5 @@ ament_auto_package(
   INSTALL_TO_SHARE
     launch
     urdf
-    # config
+    config
 )

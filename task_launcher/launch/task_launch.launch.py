@@ -49,13 +49,13 @@ def generate_launch_description():
             prefix='gnome-terminal --'
         ),
 
-        Node(
-            package='gripper_controller',
-            executable='gripper_controller_node',
-            name='gripper_controller_node',
-            output='screen',
-            prefix='gnome-terminal --'
-        ),
+        # Node(
+        #     package='gripper_controller',
+        #     executable='gripper_controller_node',
+        #     name='gripper_controller_node',
+        #     output='screen',
+        #     prefix='gnome-terminal --'
+        # ),
 
         # Node(
         #     package='detection_3d_apples',
