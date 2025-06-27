@@ -81,7 +81,7 @@ else
 	cd $src_ws_path/..
 
 	echo "$_info Patching gripper goal_tolerance"
-	sudo echo "    goal_tolerance: 0.025" >> /opt/ros/humble/share/mirte_master_arm_control/config/mirte_master_arm_control.yaml
+	echo "    goal_tolerance: 0.025" | sudo tee -a /opt/ros/humble/share/mirte_master_arm_control/config/mirte_master_arm_control.yaml
 	echo "$_warn Patching PID Tune for base, this might need to be adjusted."
 	sudo sed -i "s/{p: 1.0, i: 0.0, d: 0.0, i_clamp_max: 5.0, i_clamp_min: -5.0}/{p: 2.0, i: 0.5, d: 0.01, i_clamp_max: 15.0, i_clamp_min: -15.0, antiwindup: true}/g" /opt/ros/humble/share/mirte_base_control/config/mirte_base_control.yaml
 	echo "$_info Patching bringup/minimal_master launch file"
