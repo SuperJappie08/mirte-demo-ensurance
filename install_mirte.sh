@@ -40,8 +40,8 @@ _arch=$([[ "$(uname -p)" =~ ^x86_64$ ]] && echo "amd64" || echo "arm64")
 
 echo "$_info Adding APT repo for ros-humble-ros2-system-monitor for $_arch"
 
-sudo echo "deb [trusted=yes] https://github.com/ArendJan/mirte-ros-packages/raw/ros_mirte_humble_jammy_${_arch}_extra_packages/ ./" > /etc/apt/sources.list.d/ArendJan_mirte-extra-packages.list
-sudo echo "yaml https://github.com/ArendJan/mirte-ros-packages/raw/ros_mirte_humble_jammy_${_arch}_extra_packages/local.yaml humble" > /etc/ros/rosdep/sources.list.d/1-ArendJan_mirte-extra-packages.list
+echo "deb [trusted=yes] https://github.com/ArendJan/mirte-ros-packages/raw/ros_mirte_humble_jammy_${_arch}_extra_packages/ ./" | sudo tee /etc/apt/sources.list.d/ArendJan_mirte-extra-packages.list
+echo "yaml https://github.com/ArendJan/mirte-ros-packages/raw/ros_mirte_humble_jammy_${_arch}_extra_packages/local.yaml humble" | sudo tee /etc/ros/rosdep/sources.list.d/1-ArendJan_mirte-extra-packages.list
 echo "$_done Succesfully added apt repo for ros2-system-monitor"
 
 echo "$_info Updating and Installing new packages"
