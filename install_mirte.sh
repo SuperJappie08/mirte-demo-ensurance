@@ -1,5 +1,4 @@
 #!/bin/bash
-DEBUG_simulate=true
 _demo_branch="development-detection"
 _info_color=$'\e[1;34m'
 _warn_color=$'\e[1;33m'
