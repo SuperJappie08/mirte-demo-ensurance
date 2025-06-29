@@ -60,9 +60,7 @@ public:
       ss << " z = " << target_point.point.z;
       ss << " home = " << home;
 
-      goal.x = target_point.point.x;
-      goal.y = target_point.point.y;
-      goal.z = target_point.point.z;
+      goal.point = target_point;
     }
     goal.home = home;
 

@@ -15,6 +15,7 @@
 #include <sensor_msgs/msg/joint_state.hpp>
 
 #include "ik_solver.hpp"
+#include <Eigen/Dense>
 
 // TF2 includes
 #include <tf2_ros/transform_listener.h>
@@ -33,6 +34,7 @@ public:
 
     MoveArmServer() : Node("move_arm_server")
     {
+        ik_solver_ = std::make_shared<IkSolver>(this);
         // Initialize TF2 buffer and listener using direct construction
         try {
             tf_buffer_ = std::make_shared<tf2_ros::Buffer>(this->get_clock());
@@ -77,6 +79,8 @@ private:
     std::unordered_set<std::string> target_joints_;
     std::mutex mutex_;
 
+    std::shared_ptr<IkSolver> ik_solver_;
+
     std::shared_ptr<tf2_ros::Buffer> tf_buffer_;
     std::shared_ptr<tf2_ros::TransformListener> tf_listener_;
 
@@ -84,7 +88,8 @@ private:
         const rclcpp_action::GoalUUID &,
         std::shared_ptr<const MoveArm::Goal> goal)
     {
-        RCLCPP_INFO(this->get_logger(), "Received goal (map frame): x=%.2f, y=%.2f, z=%.2f", goal->point.point.x, goal->point.point.y, goal->point.point.z);
+        RCLCPP_INFO(this->get_logger(), "Received goal (map frame): x=%.2f, y=%.2f, z=%.2f",
+            goal->point.point.x, goal->point.point.y, goal->point.point.z);
         return rclcpp_action::GoalResponse::ACCEPT_AND_EXECUTE;
     }
 
@@ -96,32 +101,26 @@ private:
 
     void handle_accepted(const std::shared_ptr<GoalHandle> goal_handle)
     {
-        std::thread{std::bind(&MoveArmServer::execute, this, goal_handle)}.detach();
+        std::thread{std::bind(&MoveArmServer::execute, this, _1), goal_handle}.detach();
     }
 
     void execute(const std::shared_ptr<GoalHandle> goal_handle)
     {
         auto result = std::make_shared<MoveArm::Result>();
 
-        geometry_msgs::msg::Point point = goal_handle->get_goal()->point.point;
+        auto point = goal_handle->get_goal()->point.point;
+        bool home = goal_handle->get_goal()->home;
 
-        if (goal_handle->get_goal()->home == true){
-            std::vector<double> reset = {0.0,0.8,-1.5,-0.8};
-            send_joint_trajectory(reset);
-            result->success = true;
-            result->message = "Homing.";
-            goal_handle->succeed(result);
-            return;
-        }
+        double x,y,z;
 
         geometry_msgs::msg::PointStamped map_point;
         map_point.header.frame_id = "map";
-        map_point.header.stamp = this->get_clock()->now();
+        map_point.header.stamp = this->get_clock()->now() - rclcpp::Duration(0, 5);
         map_point.point.x = point.x;
         map_point.point.y = point.y;
         map_point.point.z = point.z;
 
-        geometry_msgs::msg::PointStamped base_link_point;
+        geometry_msgs::msg::PointStamped shoulder_link_point;
 
         // Check if tf_buffer_ is valid before using it
         if (!tf_buffer_) {
@@ -134,28 +133,26 @@ private:
 
         RCLCPP_INFO(this->get_logger(), "Starting transform lookup...");
 
-        double x,y,z;
-
         // Wait for transform to become available with timeout
         try {
-            std::string timeout_msg;
-            if (!tf_buffer_->canTransform("base_link", "map", tf2::TimePointZero, tf2::durationFromSec(5.0), &timeout_msg)) {
-                RCLCPP_WARN(this->get_logger(), "Transform not available: %s", timeout_msg.c_str());
-                result->success = false;
-                result->message = "Transform to 'base_link' not available: " + timeout_msg;
-                goal_handle->abort(result);
-                return;
-            }
+            // std::string timeout_msg;
+            // if (!tf_buffer_->canTransform("shoulder_link", "map", tf2::TimePointZero, tf2::durationFromSec(50.0), &timeout_msg)) {
+            //     RCLCPP_WARN(this->get_logger(), "Transform not available: %s", timeout_msg.c_str());
+            //     result->success = false;
+            //     result->message = "Transform to 'shoulder_link' not available: " + timeout_msg;
+            //     goal_handle->abort(result);
+            //     return;
+            // }
 
             RCLCPP_INFO(this->get_logger(), "Transform is available, performing transformation...");
             
             // Perform the transform
-            base_link_point = tf_buffer_->transform(map_point, "base_link", tf2::durationFromSec(1.0));
-            x = base_link_point.point.x;
-            y = base_link_point.point.y;
-            z = base_link_point.point.z;
+            shoulder_link_point = tf_buffer_->transform(map_point, "shoulder_link", tf2::durationFromSec(50.0));
+            x = shoulder_link_point.point.x;
+            y = shoulder_link_point.point.y;
+            z = shoulder_link_point.point.z;
 
-            RCLCPP_INFO(this->get_logger(), "Transformed to base_link: x=%.2f, y=%.2f, z=%.2f", x, y, z);
+            RCLCPP_INFO(this->get_logger(), "Transformed to shoulder_link: x=%.2f, y=%.2f, z=%.2f", x, y, z);
         } catch (const tf2::TransformException &ex) {
             RCLCPP_ERROR(this->get_logger(), "Transform failed: %s", ex.what());
             result->success = false;
@@ -170,12 +167,24 @@ private:
             return;
         }
 
-        IkSolver ik_solver;
-        std::vector<double> target_joint_angles = ik_solver.calculateAngles(x, y, z);
+        std::vector<double> target_joint_angles;
 
-        RCLCPP_INFO(this->get_logger(), "Calculated joint angles: %.2f, %.2f, %.2f, %.2f",
-                    target_joint_angles[0], target_joint_angles[1],
-                    target_joint_angles[2], target_joint_angles[3]);
+        if (home == true){
+            target_joint_angles = {0.0,0.8,-1.5,-0.8};
+            RCLCPP_INFO(this->get_logger(), "Moving arm to home position: %.2f, %.2f, %.2f, %.2f",
+                        target_joint_angles[0], target_joint_angles[1],
+                        target_joint_angles[2], target_joint_angles[3]);
+        }
+        else{
+        RCLCPP_WARN(this->get_logger(), "KAAS1");
+            
+            target_joint_angles = ik_solver_->calculateAngles(x, y, z);
+    RCLCPP_WARN(this->get_logger(), "KAAS2");
+
+            RCLCPP_INFO(this->get_logger(), "Calculated joint angles: %.2f, %.2f, %.2f, %.2f",
+                        target_joint_angles[0], target_joint_angles[1],
+                        target_joint_angles[2], target_joint_angles[3]);
+        }
 
         feedback_ = std::make_shared<MoveArm::Feedback>();
         feedback_->status = "Goal joint angles: " +
@@ -210,7 +219,7 @@ private:
                                      fabs(elbow - target_joint_angles[2]) +
                                      fabs(wrist - target_joint_angles[3]);
 
-                if (total_error < 0.05) {
+                if (total_error < 0.1) {
                     result->success = true;
                     result->message = "Goal reached.";
                     goal_handle->succeed(result);

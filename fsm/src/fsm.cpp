@@ -490,9 +490,9 @@ private:
     }
 
     auto goal_msg = MoveArm::Goal();
-    goal_msg.x = x;
-    goal_msg.y = y;
-    goal_msg.z = z;
+    goal_msg.point.point.x = x;
+    goal_msg.point.point.y = y;
+    goal_msg.point.point.z = z;
     goal_msg.home = home;
 
     publish_debug(
