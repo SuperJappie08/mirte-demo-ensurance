@@ -89,7 +89,7 @@ else
 	echo "$_done Patching finished"
 
 	echo "$_info Building the workspace"
-	colcon build --symlink-install --mixin rel-with-deb-info
+	colcon build --symlink-install --mixin rel-with-deb-info --packages-ignore rplidar_ros web_video_server
 	echo "$_done Finished building the workspace"
 
 	echo "$_info Starting ROS and Shutdown service"
