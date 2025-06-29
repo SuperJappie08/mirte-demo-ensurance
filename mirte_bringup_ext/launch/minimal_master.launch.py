@@ -235,9 +235,11 @@ def generate_launch_description():
 
     system_monitor = IncludeLaunchDescription(
         PathJoinSubstitution(
-            FindPackageShare("ros2_system_monitor"),
-            "launch",
-            "system_monitor.launch.py",
+            [
+                FindPackageShare("ros2_system_monitor"),
+                "launch",
+                "system_monitor.launch.py",
+            ]
         )
     )
 
