@@ -73,7 +73,7 @@ else
 	echo "$_info Adding apple_locator package"
 	ln -s $demo_path/apple_locator $demo_ws_path/
 	echo "$_info Installing dependencies"
-	rosdep install --from-paths src --ignore-src -ry
+	rosdep install --from-paths $src_ws_path --ignore-src -ry
 
 	echo "$_info Patching robot description"
 	cp $demo_path/mirte_bringup_ext/urdf/* $src_ws_path/mirte-ros-packages/mirte_description/mirte_master_description/urdf
